@@ -91,20 +91,23 @@ def main():
         #time.sleep(10)     #Abbruch nach Zeit
     except KeyboardInterrupt:
         print("\nStopping all sessions...")
+    finally:
         for sess_id, handle in sessions.items():
             try:
                 client.ranging_stop(handle)
-                client.session_deinit(handle)
-                print(f"Session {sess_id} stopped and deinitialized.")
             except Exception as e:
-                print(f"Error stopping session {sess_id}: {e}")
-        client.close()
-        print("All sessions closed. Exiting.")
-    finally:
-        print("Stopping...")
-        client.ranging_stop(session_handle)
-        client.session_deinit(session_handle)
-        client.close()
+                print(f"Error stopping ranging for session {sess_id}: {e}")
+            try:
+                client.session_deinit(handle)
+                print(f"Session {sess_id} deinitialized.")
+            except Exception as e:
+                print(f"Error deinitializing session {sess_id}: {e}")
+
+        try:
+            client.close()
+            print("All sessions closed. Exiting.")
+        except Exception as e:
+            print(f"Error closing client: {e}")
 
 if __name__ == "__main__":
     main()
