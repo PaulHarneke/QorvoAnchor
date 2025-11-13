@@ -41,6 +41,14 @@ def main():
         print(f"session_init failed: {rts}")
         sys.exit(1)
 
+    # Zeit- und Kanalplanung für drei Controller:
+    # - Controller A (dieses Skript) nutzt Kanal 5 und startet ohne Verzögerung.
+    # - Controller B nutzt Kanal 9 und startet mit 33 ms Verzögerung.
+    # - Controller C nutzt Kanal 13 und startet mit 66 ms Verzögerung.
+    # Alle Controller arbeiten mit einem Ranging-Intervall von 100 ms, sodass die
+    # Slots gleichmäßig über eine 100 ms-Periode verteilt sind und sich nicht
+    # überlappen.
+
     configs = [
         (App.DeviceType, 1),
         (App.DeviceRole, 1),
@@ -50,7 +58,7 @@ def main():
         (App.ScheduleMode, 1),
         (App.RangingRoundUsage, 2),
         (App.ChannelNumber, 5),
-        (App.RangingInterval, 400),
+        (App.RangingInterval, 100),
     ]
 
     rts, _ = client.session_set_app_config(session_handle, configs)
@@ -58,6 +66,7 @@ def main():
         print(f"session_set_app_config failed: {rts}")
         sys.exit(1)
 
+    # Controller A startet ohne Verzögerung.
     rts = client.ranging_start(session_handle)
     if rts != Status.Ok:
         print(f"ranging_start failed: {rts}")

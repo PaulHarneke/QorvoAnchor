@@ -49,8 +49,8 @@ def main():
         (App.MultiNodeMode, 0),
         (App.ScheduleMode, 1),
         (App.RangingRoundUsage, 2),
-        (App.ChannelNumber, 9),
-        (App.RangingInterval, 400),
+        (App.ChannelNumber, 13),
+        (App.RangingInterval, 100),
     ]
 
     rts, _ = client.session_set_app_config(session_handle, configs)
@@ -58,6 +58,10 @@ def main():
         print(f"session_set_app_config failed: {rts}")
         sys.exit(1)
 
+    # Controller C startet 66 ms nach Controller A und 33 ms nach Controller B,
+    # womit jeder Controller einen eigenen Slot innerhalb der 100 ms-Periode
+    # erhält.
+    time.sleep(0.066)
     rts = client.ranging_start(session_handle)
     if rts != Status.Ok:
         print(f"ranging_start failed: {rts}")

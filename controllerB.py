@@ -50,7 +50,7 @@ def main():
         (App.ScheduleMode, 1),
         (App.RangingRoundUsage, 2),
         (App.ChannelNumber, 9),
-        (App.RangingInterval, 400),
+        (App.RangingInterval, 100),
     ]
 
     rts, _ = client.session_set_app_config(session_handle, configs)
@@ -58,6 +58,9 @@ def main():
         print(f"session_set_app_config failed: {rts}")
         sys.exit(1)
 
+    # Controller B startet 33 ms nach Controller A, um eine gleichmäßige
+    # Verteilung der 100 ms-Ranging-Slots zu erreichen.
+    time.sleep(0.033)
     rts = client.ranging_start(session_handle)
     if rts != Status.Ok:
         print(f"ranging_start failed: {rts}")
